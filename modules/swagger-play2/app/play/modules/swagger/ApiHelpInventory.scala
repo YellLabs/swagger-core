@@ -31,6 +31,7 @@ import play.api.Logger
 import scala.collection.mutable.ListBuffer
 import scala.Predef._
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
  * Exposes two primay methods: to get a list of available resources and to get details on a given resource
@@ -60,12 +61,14 @@ object ApiHelpInventory {
 
   def getResourceNames: java.util.List[String] = getResourceMap.keys.toList
 
+  def getResourceMapJava = getResourceMap.asJava
+  
   private val jaxbContext = JAXBContext.newInstance(classOf[Documentation]);
 
   /**
    * Get a list of all top level resources
    */
-  private def getRootResources(format: String)(implicit requestHeader: RequestHeader) = {
+  def getRootResources(format: String)(implicit requestHeader: RequestHeader) = {
     var apiFilter: ApiAuthorizationFilter = ApiAuthorizationFilterLocator.get(apiFilterClassName)
 
     val allApiDoc = new Documentation
@@ -97,7 +100,7 @@ object ApiHelpInventory {
   /**
    * Get detailed API/models for a given resource
    */
-  private def getResource(resourceName: String)(implicit requestHeader: RequestHeader) = {
+  def getResource(resourceName: String)(implicit requestHeader: RequestHeader) = {
     val qualifiedResourceName = PlayApiReader.formatString match {
       case e: String if(e != "") => {
         resourceName.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
@@ -176,7 +179,7 @@ object ApiHelpInventory {
   /**
    * Get a list of all controller classes in Play
    */
-  private def getControllerClasses = {
+  def getControllerClasses = {
     if (this.controllerClasses.isEmpty) {
       // get from application routes
       val controllers = current.routes match {
@@ -217,13 +220,13 @@ object ApiHelpInventory {
     controllerClasses
   }
 
-  private def getResourceMap = {
+  def getResourceMap = {
     // check if resources and controller info has already been loaded
     if (controllerClasses.length == 0)
       this.getControllerClasses
     this.resourceMap
   }
-
+  
   private def isApiAdded(allApiDoc: Documentation, endpoint: DocumentationEndPoint): Boolean = {
     var isAdded: Boolean = false
     Option(allApiDoc.getApis) match {
