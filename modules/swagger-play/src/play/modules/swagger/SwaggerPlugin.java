@@ -38,8 +38,8 @@ public class SwaggerPlugin extends PlayPlugin {
     private static final String APPLICATION_XML = "application/xml";
     private static final String UTF_8 = "UTF-8";
     private static final String XML = ".xml";
-    private static final String RESOURCES_XML = "/resources.xml";
-    private static final String RESOURCES_JSON = "/resources.json";
+    private static final String RESOURCES_XML = "/api-docs.xml";
+    private static final String RESOURCES_JSON = "/api-docs.json";
 
     @Override
     public boolean rawInvocation(Request request, Response response) throws Exception {
@@ -48,12 +48,12 @@ public class SwaggerPlugin extends PlayPlugin {
         try {
             final List<String> resourceNames = ApiHelpInventory.getResourceNames();
             for (String resourceName : resourceNames) {
-                if (request.path.equals(resourceName + JSON)) {
+                if (request.path.equals(RESOURCES_JSON + resourceName)) {
                     response.contentType = APPLICATION_JSON;
                     String apiHelp = ApiHelpInventory.getPathHelpJson(resourceName);
                     response.out.write(apiHelp.getBytes(UTF_8));
                     return true;
-                } else if (request.path.equals(resourceName + XML)) {
+                } else if (request.path.equals(RESOURCES_XML + resourceName)) {
                     response.contentType = APPLICATION_XML;
                     String apiHelp = ApiHelpInventory.getPathHelpXml(resourceName);
                     response.out.write(apiHelp.getBytes(UTF_8));
@@ -88,11 +88,11 @@ public class SwaggerPlugin extends PlayPlugin {
             Logger.info("Swagger: Added ROOT help api @ " + RESOURCES_JSON);
             Logger.info("Swagger: Added ROOT help api @ " + RESOURCES_XML);
             for (String resourceName : resourceNames) {
-                Router.prependRoute("GET", resourceName + ".json", "ApiHelpController.catchAll");
-                Router.prependRoute("GET", resourceName + ".xml", "ApiHelpController.catchAll");
+                Router.prependRoute("GET", RESOURCES_JSON + resourceName, "ApiHelpController.catchAll");
+                Router.prependRoute("GET", RESOURCES_XML + resourceName, "ApiHelpController.catchAll");
 
-                Logger.info("Swagger: Added help api @ " + resourceName + ".json");
-                Logger.info("Swagger: Added help api @ " + resourceName + ".xml");
+                Logger.info("Swagger: Added help api @ " + RESOURCES_JSON + resourceName);
+                Logger.info("Swagger: Added help api @ " + RESOURCES_XML + resourceName);
             }
         }
     }

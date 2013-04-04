@@ -16,6 +16,7 @@
 
 package play.modules.swagger
 
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._
 
 import scala.collection.JavaConversions._

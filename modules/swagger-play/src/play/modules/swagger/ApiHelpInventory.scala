@@ -16,11 +16,12 @@
 
 package play.modules.swagger
 
-import org.codehaus.jackson.map.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import play.{Play, Logger}
 
 import collection.mutable.ListBuffer
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.play._
 
 import javax.xml.bind.JAXBContext
@@ -29,6 +30,7 @@ import java.io.StringWriter
 
 import scala.Predef._
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
   * Exposes two primay methods: to get a list of available resources and to get details on a given resource
@@ -57,13 +59,15 @@ object ApiHelpInventory {
 
   def getResourceNames: java.util.List[String] = getResourceMap.keys.toList
 
+  def getResourceMapJava = getResourceMap.asJava
+  
   private val jaxbContext = JAXBContext.newInstance(classOf[Documentation]);
   private val jacksonObjectMapper = new ObjectMapper();
 
   /**
     * Get a list of all top level resources
     */
-  private def getRootResources(format: String) = {
+  def getRootResources(format: String) = {
     var apiFilter: ApiAuthorizationFilter = null
     if(null != apiFilterClassName) {
       try {
@@ -98,7 +102,7 @@ object ApiHelpInventory {
   /**
     * Get detailed API/models for a given resource
     */
-  private def getResource(resourceName: String) = {
+  def getResource(resourceName: String) = {
     getResourceMap.get(resourceName) match {
       case Some(clazz) => {
         val currentApiEndPoint = clazz.getAnnotation(classOf[Api])
@@ -146,7 +150,7 @@ object ApiHelpInventory {
   /**
     * Get a list of all controller classes in Play
     */
-  private def getControllerClasses = {
+  def getControllerClasses = {
     if(this.controllerClasses.length == 0) {
       val classes = Play.classes.all().toList
       for (clazz <- classes) {
@@ -173,7 +177,7 @@ object ApiHelpInventory {
     controllerClasses
   }
 
-  private def getResourceMap = {
+  def getResourceMap = {
     // check if resources and controller info has already been loaded
     if(controllerClasses.length == 0) {
       this.getControllerClasses;
