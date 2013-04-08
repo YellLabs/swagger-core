@@ -150,8 +150,9 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     }
 
     val s = PlayApiReader.formatString match {
-      case "" => str
-      case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
+      case _ => str
+      //case "" => str
+      //case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
     }
     Logger debug (s)
     s

@@ -120,7 +120,8 @@ class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swaggerVersi
    */
   override def getPath(method: Method) = {
     getRoute(method) match {
-      case Some(route) => route.path.replace(".json", ".{format}").replace(".xml", ".{format}")
+      case Some(route) => route
+      //case Some(route) => route.path.replace(".json", ".{format}").replace(".xml", ".{format}")
       case None => Logger.info("Cannot determine Path. Nothing defined in play routes file for api method " + method.toString); this.resourcePath
     }
   }
