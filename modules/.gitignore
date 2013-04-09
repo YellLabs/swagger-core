@@ -2,3 +2,8 @@ swagger-play/dist/
 swagger-play/eclipse/
 swagger-play/lib/
 swagger-play2/logs/
+
+swagger-play/conf/private/
+swagger-play2/build.sbt.hibu
+
+
