@@ -1,0 +1,8 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Swagger urls
+GET     /api-docs.json                com.wordnik.swagger.play.controllers.ApiHelpController.getResources
+GET     /api-docs.json/*resourcePath  com.wordnik.swagger.play.controllers.ApiHelpController.getResource(resourcePath)
+

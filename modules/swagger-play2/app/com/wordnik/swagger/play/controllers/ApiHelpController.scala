@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package controllers
+package com.wordnik.swagger.play.controllers
 
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util.JsonUtil
@@ -77,9 +77,10 @@ object ApiHelpController extends SwaggerBaseApiController {
     returnValue(request, resources)
   }
 
-  def getResource(path: String) = Action { request =>
+  def getResource(resourcePath: String) = Action { request =>
     implicit val requestHeader: RequestHeader = request
 
+    val path = request.path
     val help = returnXml(request) match {
       case true => ApiHelpInventory.getPathHelpXml(path)
       case false => ApiHelpInventory.getPathHelpJson(path)
