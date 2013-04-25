@@ -6,3 +6,5 @@
 GET     /api-docs.json                com.wordnik.swagger.play.controllers.ApiHelpController.getResources
 GET     /api-docs.json/*resourcePath  com.wordnik.swagger.play.controllers.ApiHelpController.getResource(resourcePath)
 
+GET     /api-docs.xml                 com.wordnik.swagger.play.controllers.ApiHelpController.getResources
+GET     /api-docs.xml/*resourcePath   com.wordnik.swagger.play.controllers.ApiHelpController.getResource(resourcePath)
