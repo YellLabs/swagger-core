@@ -22,6 +22,12 @@ repositories:
             - com/wordnik -> swagger-core_2.9.1 1.2.2.hibu-SNAPSHOT
             - com/wordnik -> swagger-annotations_2.9.1 1.2.2-SNAPSHOT
 
+    #- localSwaggerCore:
+    #    type:       local
+    #    artifact:   /Users/paolo/.m2/repository/com/wordnik/swagger-core_2.9.1/1.2.2-SNAPSHOT/swagger-core_2.9.1-1.2.2-SNAPSHOT.jar
+    #    contains:
+    #        - com/wordnik -> swagger-core_2.9.1 1.2.2.hibu-SNAPSHOT
+
     - sonatype:
         type:       iBiblio
         root:       https://oss.sonatype.org/content/repositories/releases/

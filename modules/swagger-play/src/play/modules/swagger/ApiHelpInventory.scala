@@ -83,7 +83,15 @@ object ApiHelpInventory {
     for (clazz <- getControllerClasses) {
       val apiAnnotation = clazz.getAnnotation(classOf[Api])
       if(null != apiAnnotation){
-        val api = new DocumentationEndPoint(apiAnnotation.value + ".{format}", apiAnnotation.description())
+
+        val listingPath = {
+          if(apiAnnotation.listingPath != "") apiAnnotation.listingPath
+          else apiAnnotation.value
+        }
+
+        val realPath = apiAnnotation.value.replaceAll("\\.json", "{format}").replaceAll("\\.xml", "{format}")
+        
+        val api = new DocumentationEndPoint(listingPath, apiAnnotation.description())
         if(!isApiAdded(allApiDoc, api)) {
           if (null == apiFilter || apiFilter.authorizeResource(api.path, null, null)){
             allApiDoc.addApi(api)

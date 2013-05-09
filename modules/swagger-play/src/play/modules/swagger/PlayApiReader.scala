@@ -18,11 +18,15 @@ package play.modules.swagger
 
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.core.ApiValues._
 
 import scala.collection.JavaConversions._
 import org.slf4j.LoggerFactory
 
 import java.lang.reflect.Method
+
+import javax.ws.rs._
+import javax.ws.rs.core.Context
 
 import play.mvc.Router
 import play.Logger
@@ -81,17 +85,15 @@ class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swaggerVersi
     getRoute(method) match {
       case Some(route) => {
         o.httpMethod = route.method
-
         if (o.getParameters() != null && o.getParameters().length > 0) {
           val routeHasPathParams = route.path.contains("{")
 
           if (routeHasPathParams) {
             val routePathParams: List[String] = (RX findAllIn route.path).toList
-
             for (param <- o.getParameters()) {
               param.paramType = routePathParams.find(_.equals("{" + param.name + "}")) match {
                 case Some(p) => ApiValues.TYPE_PATH
-                case None => if (POST.equalsIgnoreCase(route.method)) ApiValues.TYPE_BODY else ApiValues.TYPE_QUERY
+                case None => if (POST.equalsIgnoreCase(route.method) || "put".equalsIgnoreCase(route.method)) ApiValues.TYPE_BODY else ApiValues.TYPE_QUERY
               }
             }
           } else {
@@ -111,8 +113,43 @@ class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swaggerVersi
     ""
   }
 
-  override def processParamAnnotations(docParam: DocumentationParameter,paramAnnotations: Array[java.lang.annotation.Annotation], method: Method): Boolean = {
-    false
+  override def processParamAnnotations(docParam: DocumentationParameter, paramAnnotations: Array[java.lang.annotation.Annotation], method: Method): Boolean = {
+    var ignoreParam = false
+    for (pa <- paramAnnotations) {
+      pa match {
+        case apiParam: ApiParam => {
+          parseApiParam(docParam, apiParam, method)
+        }
+        case wsParam: QueryParam => {
+          docParam.name = readString(wsParam.value, docParam.name)
+          docParam.paramType = readString(TYPE_QUERY, docParam.paramType)
+        }
+        case wsParam: PathParam => {
+          docParam.name = readString(wsParam.value, docParam.name)
+          docParam.required = true
+          docParam.paramType = readString(TYPE_PATH, docParam.paramType)
+        }
+        case wsParam: MatrixParam => {
+          docParam.name = readString(wsParam.value, docParam.name)
+          docParam.paramType = readString(TYPE_MATRIX, docParam.paramType)
+        }
+        case wsParam: HeaderParam => {
+          docParam.name = readString(wsParam.value, docParam.name)
+          docParam.paramType = readString(TYPE_HEADER, docParam.paramType)
+        }
+        case wsParam: FormParam => {
+          docParam.name = readString(wsParam.value, docParam.name)
+          docParam.paramType = readString(TYPE_FORM, docParam.paramType)
+        }
+        case wsParam: CookieParam => {
+          docParam.name = readString(wsParam.value, docParam.name)
+          docParam.paramType = readString(TYPE_COOKIE, docParam.paramType)
+        }
+        case wsParam: Context => ignoreParam = true
+        case _ => Unit
+      }
+    }
+    ignoreParam
   }
   
   /**
@@ -120,7 +157,7 @@ class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swaggerVersi
    */
   override def getPath(method: Method) = {
     getRoute(method) match {
-      case Some(route) => route
+      case Some(route) => route.path
       //case Some(route) => route.path.replace(".json", ".{format}").replace(".xml", ".{format}")
       case None => Logger.info("Cannot determine Path. Nothing defined in play routes file for api method " + method.toString); this.resourcePath
     }
