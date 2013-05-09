@@ -1,4 +1,4 @@
-self: com/wordnik -> swagger-play_2.9.1 0.1.hibu
+self: com/wordnik -> swagger-play_2.9.1 0.1.hibu2
 
 require:
     - com/wordnik -> swagger-core_2.9.1 1.2.2.hibu-SNAPSHOT
