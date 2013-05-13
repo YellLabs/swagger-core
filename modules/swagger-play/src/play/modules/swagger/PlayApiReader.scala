@@ -98,7 +98,7 @@ class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swaggerVersi
             }
           } else {
             for (param <- o.getParameters()) {
-              param.paramType = if (POST.equalsIgnoreCase(route.method)) ApiValues.TYPE_BODY else ApiValues.TYPE_QUERY
+              param.paramType = if (POST.equalsIgnoreCase(route.method) || "put".equalsIgnoreCase(route.method)) ApiValues.TYPE_BODY else ApiValues.TYPE_QUERY
             }
           }
         }
