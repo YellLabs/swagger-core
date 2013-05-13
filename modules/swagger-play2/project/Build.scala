@@ -4,7 +4,7 @@ import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.2.1.hibu2-SNAPSHOT"
+  val appVersion = "1.2.1.hibu3"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "com.fasterxml.jackson.module" % "jackson-module-scala" % "2.0.0",
